@@ -1,0 +1,35 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Credenciais
+.env
+*.env
+
+# Streamlit secrets
+.streamlit/secrets.toml
+streamlit_app/.streamlit/secrets.toml
+
+# Dados locais
+data/
+*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testes locais
+test_azure_sql.py
+
+# Temporários
+*.tmp
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db

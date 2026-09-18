@@ -1,0 +1,2 @@
+Modelo,Periodo,Incidentes_Avaliados,Alertas_Gerados,Risco_Critico,Risco_Alto,Violacoes_Reais,PR_AUC,Recall_Top5pct,Lift_Top5pct
+LogisticRegression_Balanced,2025-11-01 a 2025-12-31,3057,74,31,122,39,0.21305887674382168,0.38461538461538464,7.684766214177979
