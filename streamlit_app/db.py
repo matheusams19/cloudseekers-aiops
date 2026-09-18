@@ -8,11 +8,12 @@ import streamlit as st
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import URL
 from azure.identity import InteractiveBrowserCredential
 
 
 # =========================================================
-# CONFIGURAÇÃO
+# CONFIGURAÇÃO LOCAL
 # =========================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ ENV_FILE = PROJECT_ROOT / ".env"
 
 load_dotenv(ENV_FILE, override=True)
 
-SERVER = os.getenv("AZURE_SQL_SERVER")
-DATABASE = os.getenv("AZURE_SQL_DATABASE")
-USER = os.getenv("AZURE_SQL_USER")
-DRIVER = os.getenv(
+LOCAL_SERVER = os.getenv("AZURE_SQL_SERVER")
+LOCAL_DATABASE = os.getenv("AZURE_SQL_DATABASE")
+LOCAL_USER = os.getenv("AZURE_SQL_USER")
+LOCAL_DRIVER = os.getenv(
     "AZURE_SQL_DRIVER",
     "ODBC Driver 18 for SQL Server"
 )
@@ -33,22 +34,63 @@ SQL_COPT_SS_ACCESS_TOKEN = 1256
 
 
 # =========================================================
-# CREDENCIAL MICROSOFT ENTRA
+# DETECTAR AMBIENTE
+# =========================================================
+
+def em_producao():
+    """
+    Retorna True quando as credenciais do Streamlit Cloud
+    estiverem configuradas em st.secrets.
+    """
+    try:
+        return "azure_sql" in st.secrets
+    except Exception:
+        return False
+
+
+# =========================================================
+# PRODUÇÃO - STREAMLIT CLOUD
+# =========================================================
+
+@st.cache_resource
+def get_engine_producao():
+
+    cfg = st.secrets["azure_sql"]
+
+    server = cfg["server"]
+    database = cfg["database"]
+    user = cfg["user"]
+    password = cfg["password"]
+
+    url = URL.create(
+        "mssql+pymssql",
+        username=user,
+        password=password,
+        host=server,
+        port=1433,
+        database=database,
+    )
+
+    return create_engine(
+        url,
+        pool_pre_ping=True,
+        pool_recycle=300,
+    )
+
+
+# =========================================================
+# LOCAL - MICROSOFT ENTRA
 # =========================================================
 
 @st.cache_resource
 def get_credential():
 
     return InteractiveBrowserCredential(
-        login_hint=USER or None
+        login_hint=LOCAL_USER or None
     )
 
 
-# =========================================================
-# CONEXÃO AZURE SQL
-# =========================================================
-
-def create_connection():
+def create_local_connection():
 
     credential = get_credential()
 
@@ -67,9 +109,9 @@ def create_connection():
     )
 
     connection_string = (
-        f"DRIVER={{{DRIVER}}};"
-        f"SERVER={SERVER};"
-        f"DATABASE={DATABASE};"
+        f"DRIVER={{{LOCAL_DRIVER}}};"
+        f"SERVER={LOCAL_SERVER};"
+        f"DATABASE={LOCAL_DATABASE};"
         "Encrypt=yes;"
         "TrustServerCertificate=no;"
         "Connection Timeout=30;"
@@ -83,22 +125,30 @@ def create_connection():
     )
 
 
-# =========================================================
-# SQLALCHEMY ENGINE
-# =========================================================
-
 @st.cache_resource
-def get_engine():
+def get_engine_local():
 
     return create_engine(
         "mssql+pyodbc://",
-        creator=create_connection,
-        pool_pre_ping=True
+        creator=create_local_connection,
+        pool_pre_ping=True,
     )
 
 
 # =========================================================
-# CONSULTAS
+# ENGINE AUTOMÁTICO
+# =========================================================
+
+def get_engine():
+
+    if em_producao():
+        return get_engine_producao()
+
+    return get_engine_local()
+
+
+# =========================================================
+# TESTE DO BANCO
 # =========================================================
 
 def get_database_name():
@@ -112,10 +162,12 @@ def get_database_name():
         ).scalar_one()
 
 
+# =========================================================
+# GOLD - FORECAST
+# =========================================================
+
 @st.cache_data(ttl=300)
 def carregar_forecast():
-
-    engine = get_engine()
 
     query = """
         SELECT
@@ -131,14 +183,16 @@ def carregar_forecast():
 
     return pd.read_sql(
         query,
-        engine
+        get_engine()
     )
 
 
+# =========================================================
+# GOLD - RISCO OLA
+# =========================================================
+
 @st.cache_data(ttl=300)
 def carregar_risco_ola():
-
-    engine = get_engine()
 
     query = """
         SELECT
@@ -158,5 +212,5 @@ def carregar_risco_ola():
 
     return pd.read_sql(
         query,
-        engine
+        get_engine()
     )

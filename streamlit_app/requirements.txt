@@ -3,5 +3,6 @@ pandas
 plotly
 sqlalchemy
 pyodbc
+pymssql
 python-dotenv
 azure-identity
