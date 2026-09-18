@@ -29,150 +29,51 @@ LOGO = BASE_DIR / "assets" / "logo_cloudseekers.png"
 # IDENTIDADE VISUAL
 # =========================================================
 
-st.markdown(
-    """
-    <style>
-    :root {
-        --bg: #0b0f17;
-        --panel: #111827;
-        --panel-2: #151d2d;
-        --border: #243044;
-        --text: #f8fafc;
-        --muted: #94a3b8;
-    }
+st.markdown("""
+<style>
+/* Fundo geral da aplicação */
+.stApp {
+    background: linear-gradient(180deg, #07101d 0%, #050b16 100%);
+    color: white;
+}
 
-    .stApp {
-        background:
-            radial-gradient(circle at top right, rgba(139,92,246,.08), transparent 32%),
-            radial-gradient(circle at top left, rgba(34,211,238,.05), transparent 28%),
-            var(--bg);
-    }
+/* Container principal */
+[data-testid="stAppViewContainer"] {
+    background: transparent;
+}
 
-    .block-container {
-        padding-top: 1.4rem;
-        padding-bottom: 3rem;
-        max-width: 1550px;
-    }
+/* Header do Streamlit */
+[data-testid="stHeader"] {
+    background: transparent !important;
+    height: 0rem;
+}
 
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
-        border-right: 1px solid #1f2937;
-    }
+/* Barra superior */
+header {
+    background: transparent !important;
+}
 
-    [data-testid="stSidebar"] * {
-        color: #e5e7eb;
-    }
+/* Toolbar/menu do Streamlit */
+[data-testid="stToolbar"] {
+    background: transparent !important;
+}
 
-    h1, h2, h3 {
-        color: var(--text);
-    }
+/* Remove faixa branca e ajusta topo */
+.block-container {
+    padding-top: 1.2rem;
+}
 
-    [data-testid="stMetric"] {
-        background: linear-gradient(145deg, var(--panel), var(--panel-2));
-        border: 1px solid var(--border);
-        padding: 18px 18px 14px 18px;
-        border-radius: 16px;
-        box-shadow: 0 10px 28px rgba(0,0,0,.20);
-        min-height: 118px;
-    }
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #09162b 0%, #07101d 100%);
+}
 
-    [data-testid="stMetricLabel"] {
-        color: var(--muted);
-        font-weight: 600;
-    }
-
-    [data-testid="stMetricValue"] {
-        color: #ffffff;
-        font-size: 2rem;
-        font-weight: 800;
-    }
-
-    [data-testid="stDataFrame"] {
-        border: 1px solid #1f2937;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    hr {
-        border-color: #1f2937 !important;
-        opacity: .8;
-    }
-
-    .cs-subtitle {
-        color: #94a3b8;
-        font-size: 15px;
-        margin-top: -8px;
-        margin-bottom: 8px;
-    }
-
-    .cs-kicker {
-        display: inline-block;
-        color: #c4b5fd;
-        background: rgba(139,92,246,.12);
-        border: 1px solid rgba(139,92,246,.24);
-        border-radius: 999px;
-        padding: 6px 10px;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: .4px;
-        margin-bottom: 8px;
-    }
-
-    .cs-card {
-        background: linear-gradient(145deg, #111827, #151d2d);
-        border: 1px solid #243044;
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: 0 8px 24px rgba(0,0,0,.18);
-    }
-
-    .cs-card-title {
-        color: #94a3b8;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: .8px;
-        margin-bottom: 8px;
-        font-weight: 700;
-    }
-
-    .cs-card-value {
-        color: #ffffff;
-        font-size: 25px;
-        font-weight: 800;
-        line-height: 1.2;
-    }
-
-    .cs-card-text {
-        color: #cbd5e1;
-        font-size: 13px;
-        line-height: 1.5;
-        margin-top: 7px;
-    }
-
-    .cs-status-ok,
-    .cs-status-warn {
-        display: inline-block;
-        border-radius: 999px;
-        padding: 7px 11px;
-        font-weight: 700;
-        font-size: 12px;
-    }
-
-    .cs-status-ok {
-        color: #86efac;
-        background: rgba(34,197,94,.10);
-        border: 1px solid rgba(34,197,94,.30);
-    }
-
-    .cs-status-warn {
-        color: #fcd34d;
-        background: rgba(245,158,11,.10);
-        border: 1px solid rgba(245,158,11,.30);
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+/* Opcional: esconde “decoration” do topo */
+[data-testid="stDecoration"] {
+    display: none;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # =========================================================
 # FUNÇÕES AUXILIARES
